@@ -13,8 +13,10 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: false}))
 
 app.use(session({
-    maxAge: 10*60*1000,
-    name: 'tid',
+    cookie: {
+        maxAge: 10*60*1000,
+    },
+    name: 'my_cnode',
     resave: false,
     saveUninitialized: false,
     secret: 'react cnode class'

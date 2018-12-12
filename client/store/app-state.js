@@ -1,23 +1,40 @@
 import {
     observable,
     computed,
-    action
+    action,
+    extendObservable,
 } from 'mobx'
 
 import { post, get } from '../util/http'
 
 export default class AppState {
-    @observable user = {
-        isLogin: false,
-        info: {},
-        detail: {
-            recentTopics: [],
-            recentReplies: [],
-            syncing: false,
-        },
-        collections: {
-            syncing: false,
-            list: [],
+
+    constructor(data) {
+        if(data) {
+            this.user = data.user
+        } else {
+            this.user = {
+                isLogin: false,
+                info: {},
+                detail: {
+                    recentTopics: [],
+                    recentReplies: [],
+                    syncing: false,
+                },
+                collections: {
+                    syncing: false,
+                    list: [],
+                }
+            }
+        }
+    }
+    @observable user
+
+    @action backendDataInject(data) {
+        // 后端服务端渲染时的登录状态数据注入。前端不使用该方法
+        if(data.user.isLogin) {
+            this.user.isLogin = data.user.isLogin
+            this.user.info = data.user.info
         }
     }
     @action login(accessToken) {
@@ -26,8 +43,8 @@ export default class AppState {
                 accessToken,
             }).then(resp => {
                 if(resp.success) {
-                    this.user.isLogin = true
                     this.user.info = resp.data
+                    this.user.isLogin = true
                     resolve()
                 } else {
                     reject(resp)
@@ -37,6 +54,7 @@ export default class AppState {
     }
     @action getUserDetail() {
         this.user.detail.syncing = true
+        
         return new Promise((resolve, reject) => {
             get(`/user/${this.user.info.loginname}`)
                 .then((resp) => {

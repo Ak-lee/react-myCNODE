@@ -7,6 +7,7 @@ import {
 } from 'mobx'
 import { topicSchema, replySchema } from '../util/variable-define'
 import { get, post } from '../util/http'
+import { appState } from './store'
 
 const createTopic = (topic) => {
     return Object.assign({}, topicSchema, topic)
@@ -79,8 +80,8 @@ class TopicStore {
                 tab,
             }).then(response => {
                 if(response.success) {
-                    response.data.forEach(topic => {
-                        this.addTopic(topic)
+                    this.topics = response.data.map(topic => {
+                        return new Topic(createTopic(topic))
                     })
                     resolve()
                 } else {
@@ -126,7 +127,7 @@ class TopicStore {
                         title,
                         tab, 
                         content,
-                        id: resp.data.topic_id,
+                        id: resp.topic_id,
                         create_at: Date.now(),
                     }
                     this.createdTopics.push(

@@ -1,4 +1,8 @@
 const path = require('path')
+
+const isDev = process.env.NODE_ENV;
+const mode = isDev ? 'development' : 'production'
+
 module.exports = {
     output: {
         path: path.join(__dirname, '../dist'),
@@ -7,6 +11,7 @@ module.exports = {
     resolve: {
         extensions: ['.js', '.jsx']
     },
+    mode: mode,
     module: {
         rules: [
             {

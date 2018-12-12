@@ -44,19 +44,21 @@ class TopicList extends React.Component {
              this.props.topicStore.fetchTopics(this.getTab(nextProps.location.search))
         }
     }
-    bootstrap() {
-        // 这个函数时用于后端的异步请求数据后渲染，对于前端页面没什么用。后端在渲染该组件前会执行这个函数。
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                this.props.appState.count = 3;
-                resolve(true)
-            })
-        })
-    }
+    // bootstrap() {
+    //     // 这个函数时用于后端的异步请求数据后渲染，对于前端页面没什么用。后端在渲染该组件前会执行这个函数。
+    //     return new Promise((resolve) => {
+    //         setTimeout(() => {
+    //             this.props.appState.count = 3;
+    //             resolve(true)
+    //         })
+    //     })
+    // }
     render() {
         const { topicStore } = this.props
+        const {createdTopics} = topicStore
         const topicList = topicStore.topics
         const syncingTopics = topicStore.syncing
+        const { user } = this.props.appState
         const tab = this.getTab()
 
         return (
@@ -75,6 +77,26 @@ class TopicList extends React.Component {
                     }
                 </Tabs>
             
+                {
+                    (createdTopics && createdTopics.length > 0) &&
+                    <List style={{backgroundColor: '#dfdfdf' }}>
+                    {
+                        createdTopics.map((topic) => {
+                            topic = Object.assign({}, topic, {
+                                author: user.info,
+                            })
+                            return (
+                                <TopicListItem 
+                                key={topic.id}
+                                onClick={() => {
+                                    this.listItemClick(topic)
+                                }} topic={topic} />
+                            )
+                        })
+                    }
+                    </List>
+                }
+
                 <List>
                     {
                         topicList.map((topic) => {

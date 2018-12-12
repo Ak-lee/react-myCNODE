@@ -1,5 +1,4 @@
 import React from 'react'
-import SimpleMDE from 'react-simplemde-editor'
 import PropTypes from 'prop-types'
 import {
   inject,
@@ -16,6 +15,7 @@ import { withStyles } from '@material-ui/core/styles'
 import Container from '../layout/container'
 import createStyles from './style'
 import { tabs } from '../../util/variable-define'
+import SimpleMDE from '../../components/simple-mde'
 
 @inject ((stores) => {
   return {
@@ -47,15 +47,11 @@ class TopicCreate extends React.Component {
   }
 
   handleTitleChange(e) {
-    console.log('title this')
-    console.log(this.state)
     this.setState({
       title: e.target.value.trim()
     })
   }
   handleContentChange(value) {
-    console.log('content this')
-    console.log(this.state)
     this.setState({
       content: value,
     })
@@ -78,7 +74,7 @@ class TopicCreate extends React.Component {
     }
     return this.props.topicStore.createTopic(title, tab, content)
       .then(() => {
-        this.context.router.push('/index')
+        this.context.router.history.push('/index')
       })
       .catch((err) => {
         this.showMessage(err.message)
@@ -111,6 +107,13 @@ class TopicCreate extends React.Component {
         />
         <div className={classes.root}>
           <div>
+            <TextField
+              className={classes.title}
+              lable="标题"
+              value={this.state.title}
+              onChange={this.handleTitleChange}
+              fullWidth
+            />
             <SimpleMDE
               onChange={this.handleContentChange}
               value={this.state.content}
@@ -120,16 +123,6 @@ class TopicCreate extends React.Component {
                 placeholder: '发表一个新话题',
                 autofocus: false,
               }}
-            />
-            <input type="text"/>
-          </div>
-          <div>
-            <TextField
-              className={classes.title}
-              lable="标题"
-              value={this.state.title}
-              onChange={this.handleTitleChange}
-              fullWidth
             />
           </div>
           <div>

@@ -44,7 +44,7 @@ class MainAppBar extends React.Component {
         this.context.router.history.push('/index?tab=all')
     }
     createButtonClick() {
-
+        this.context.router.history.push('/topic/create')
     }
     loginButtonClick() {
         if(this.props.appState.user.isLogin) {

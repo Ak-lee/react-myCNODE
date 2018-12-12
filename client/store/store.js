@@ -9,6 +9,7 @@ export default {
 }
 
 export const createStoreMap = () => {
+    // 后端使用
     return {
         appState: new AppState(),
         topicStore: new TopicStore()

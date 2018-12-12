@@ -3,7 +3,6 @@ const HTMLPlugin = require('html-webpack-plugin')
 const webpack = require('webpack')
 const webpackMerge = require('webpack-merge')
 const baseConfig = require('./webpack.config.base')
-
 const isDev = process.env.NODE_ENV;
 
 const config = webpackMerge(baseConfig, {
@@ -13,7 +12,7 @@ const config = webpackMerge(baseConfig, {
     output: {
         filename: '[name].[hash].js',
     },
-    mode: 'development',
+    
     plugins: [
         new HTMLPlugin({
             template: path.join(__dirname, '../client/template.html')
@@ -49,6 +48,23 @@ if(isDev) {
         }
     }
     config.plugins.push(new webpack.HotModuleReplacementPlugin())
+} else {
+    config.entry = {
+        app: path.join(__dirname, '../client/app.js'),
+    }
+    config.output.filename = '[name].[chunkhash].js'
+    config.optimization = {
+        splitChunks: {
+            cacheGroups: {
+                vendor: {
+                    chunks: "initial",
+                    test: path.resolve(__dirname, "../node_modules"),
+                    name: 'vendor',
+                    enforce: true,
+                }
+            }
+        }
+    }
 }
 
 module.exports = config

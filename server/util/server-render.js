@@ -24,6 +24,19 @@ module.exports = (bundle, template, req, res) => {
             const routerContext = {}
             const stores = createStoreMap()
 
+            if(req.session.user) {
+                const data = {
+                    user: {
+                        info: {
+                            loginname: req.session.user.loginName,
+                            id: req.session.user.id,
+                            avatar_url: req.session.user.avatarUrl,
+                        },
+                        isLogin: true,
+                    },
+                }
+                stores.appState.backendDataInject(data)
+            }
             const Sheets= new SheetsRegistry()
             const generateClassName = createGenerateClassName();
             const sheetsManager = new Map();
@@ -51,7 +64,7 @@ module.exports = (bundle, template, req, res) => {
                 const content = ReactDomServer.renderToString(app)
                 const html = ejs.render(template, {
                     appString: content,
-                    initialState: serialize(state),
+                    initialState: serialize(state, {unsafe: true}),
                     meta: helmet.meta.toString(),
                     title: helmet.title.toString(),
                     style: helmet.style.toString(),
