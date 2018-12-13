@@ -36,23 +36,28 @@ class TopicList extends React.Component {
         
     }
     componentDidMount() {
-        const tab = this.getTab()
-        this.props.topicStore.fetchTopics(tab)
+        if(this.props.topicStore.topics.length  === 0) {
+            const tab = this.getTab()
+            this.props.topicStore.fetchTopics(tab)
+        }
     }
     componentWillReceiveProps(nextProps) {
         if(nextProps.location.search !== this.props.location.search) {
              this.props.topicStore.fetchTopics(this.getTab(nextProps.location.search))
         }
     }
-    // bootstrap() {
-    //     // 这个函数时用于后端的异步请求数据后渲染，对于前端页面没什么用。后端在渲染该组件前会执行这个函数。
-    //     return new Promise((resolve) => {
-    //         setTimeout(() => {
-    //             this.props.appState.count = 3;
-    //             resolve(true)
-    //         })
-    //     })
-    // }
+    bootstrap() {
+        // 这个函数时用于后端的异步请求数据后渲染，对于前端页面没什么用。后端在渲染该组件前会执行这个函数。
+        const query = queryString.parse(this.props.location.search)
+        const { tab }  = query
+        return this.props.topicStore.fetchTopics(tab || 'all')
+            .then(() => {
+                return true
+            })
+            .catch(() => {
+                return false
+            })
+    }
     render() {
         const { topicStore } = this.props
         const {createdTopics} = topicStore

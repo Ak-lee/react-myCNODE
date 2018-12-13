@@ -64,7 +64,7 @@ module.exports = (bundle, template, req, res) => {
                 const content = ReactDomServer.renderToString(app)
                 const html = ejs.render(template, {
                     appString: content,
-                    initialState: serialize(state, {unsafe: true}),
+                    initialState: serialize(state),
                     meta: helmet.meta.toString(),
                     title: helmet.title.toString(),
                     style: helmet.style.toString(),

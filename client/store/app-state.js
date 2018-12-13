@@ -2,7 +2,6 @@ import {
     observable,
     computed,
     action,
-    extendObservable,
 } from 'mobx'
 
 import { post, get } from '../util/http'

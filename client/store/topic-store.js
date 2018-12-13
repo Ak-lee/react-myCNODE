@@ -19,10 +19,14 @@ const createReply = (reply) => {
 class Topic {
     constructor(data) {
         // extendObservable 方法，把 data 上的所有属性都附加到this上。并且附加之后的方法还是响应式的。
+        if(data.syncing === false && data.createdReplies) {
+            delete data.syncing
+            delete data.createdReplies
+        }
         extendObservable(this, data)
     }
-    @observable syncing = false
-    @observable createdReplies = []
+    @observable syncing =  false
+    @observable createdReplies = [] 
     @action doReply(content) {
         return new Promise((resolve, reject) => {
             post(`/topic/${this.id}/replies`, {
@@ -52,13 +56,23 @@ class TopicStore {
     @observable createdTopics = []
 
     constructor(
-            {syncing = false, topics = [], details = [] } = {}
+            data
         ) {
-        this.syncing = syncing
-        this.topics = topics.map((topic) => 
-            new Topic(createTopic(topic))
-        )
-        this.details = details.map(topic => new Topic(createTopic(topic)))
+        if(data) {
+            this.syncing = data.syncing
+            this.topics = data.topics.map((topic) => {
+                return new Topic(createTopic(topic))
+            })
+            this.details = data.details.map(topic => new Topic(createTopic(topic)))
+        } else {
+            this.syncing = false
+            this.topics = []
+            this.details = []
+        }
+
+        // this.syncing = false
+        // this.topics = []
+        // this.details = []
     }
 
     addTopic(topic) {
